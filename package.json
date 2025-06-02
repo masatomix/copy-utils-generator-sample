@@ -13,6 +13,6 @@
     "pino-pretty": "^13.0.0"
   },
   "dependencies": {
-    "copy-utils-generator": "file:../copy-utils-generator/copy-utils-generator-0.0.7-SNAPSHOT.tgz"
+    "copy-utils-generator": "^0.0.7"
   }
 }
