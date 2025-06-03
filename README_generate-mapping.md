@@ -26,8 +26,10 @@ $
 |methodName|必須|マッピング用メソッド名を指定。|
 |fromClass|必須|マッピング**元**クラス名を指定(FQCN)|
 |toClass|必須|マッピング**先**クラス名を指定(FQCN)|
-|fromField|任意|(コピー先のプロパティ名が異なる場合)<br />マッピング元プロパティ名を指定|
-|toField|任意|(コピー先のプロパティ名が異なる場合)<br />マッピング先プロパティ名を指定|
+|fromField|任意|(コピー先のプロパティ名が異なる場合)<br />マッピング元プロパティ名を指定<br />同名のプロパティだけコピーすればよい場合は空でOK|
+|toField|任意|(コピー先のプロパティ名が異なる場合)<br />マッピング先プロパティ名を指定<br />同名のプロパティだけコピーすればよい場合は空でOK|
+|active|任意|trueの行は読み飛ばし、無視されます。<br/>デフォルトはfalseです。|
+
 
 
 例:
@@ -76,6 +78,7 @@ public interface Sample1Dto2DomainMapper {
 をもつクラス、``Sample1Dto2DomainMapper``が作成されました。
 一応ですが、プロパティ名が一致している場合は、それらもコピーされます。
 
+ クラス図にすると以下のとおりです。
  
 ![alt text](sample1.png)
 
@@ -88,7 +91,7 @@ public interface Sample1Dto2DomainMapper {
 | org.example.sample1.mapper.Sample1Dto2DomainMapper | toDomain   | org.example.sample1.model.Sample1Dto | org.example.sample1.model.Sample1Domain | from1     | to1     |
 | org.example.sample1.mapper.Sample1Dto2DomainMapper | toDomain   | org.example.sample1.model.Sample1Dto | org.example.sample1.model.Sample1Domain | from2     | to2     |
 
-のように「className,methodName,fromClass,toClass」を繰り返し記述してください。
+のように「``className,methodName,fromClass,toClass``」を繰り返し記述してください。
 
 
 ```java
@@ -112,140 +115,63 @@ MapStructの最低限の機能を使う場合は、概ねこれでOKです！
 
 ### 応用
 
+#### 除外カラム
+
+| 項目名(すべて任意指定) | 説明                                   |
+| ---------------------- | -------------------------------------- |
+| ignoreColumn           | コピーから除外したいプロパティ名を指定 |
 
 
+使用例:
+
+
+| className                                          | methodName | fromClass                             | toClass                                 | fromField | toField | ignoreColumn |
+| -------------------------------------------------- | ---------- | ------------------------------------- | --------------------------------------- | --------- | ------- | ------------ |
+| org.example.sample5.mapper.Sample5Dto2DomainMapper | toDomain   | org.example.sample5.model.Sample5Dto3 | org.example.sample5.model.Sample5Domain |           |         | id           |
+| org.example.sample5.mapper.Sample5Dto2DomainMapper | toDomain   | org.example.sample5.model.Sample5Dto3 | org.example.sample5.model.Sample5Domain |           |         | v1           |
+| org.example.sample5.mapper.Sample5Dto2DomainMapper | toDomain   | org.example.sample5.model.Sample5Dto3 | org.example.sample5.model.Sample5Domain |           |         | v2           |
+| org.example.sample5.mapper.Sample5Dto2DomainMapper | toDomain   | org.example.sample5.model.Sample5Dto3 | org.example.sample5.model.Sample5Domain | v3        | v3      |              |
+    
+実行結果(適宜整形しています)
+
+
+```java
+
+package org.example.sample5.mapper;
+
+
+@Mapper(componentModel = "spring" , unmappedTargetPolicy = ReportingPolicy.WARN  )
+public interface Sample5Dto2DomainMapper {
+
+    @Mapping(target = "id" , ignore = true)
+    @Mapping(target = "v1" , ignore = true)
+    @Mapping(target = "v2" , ignore = true)
+    @Mapping(source = "v3", target = "v3")
+    Sample5Domain toDomain(Sample5Dto3 source);
+
+
+    @Mapping(target = "id" , ignore = true)
+    @Mapping(target = "v1" , ignore = true)
+    @Mapping(target = "v2" , ignore = true)
+    @Mapping(source = "v3", target = "v3")
+    void toDomainUpdate(Sample5Dto3 source, @MappingTarget Sample5Domain target);
+
+}
+```
+
+参考: [Sample5: 複数のオブジェクトから一つのオブジェクトを作成する](https://github.com/masatomix/MapStructSample?tab=readme-ov-file#sample5-%E8%A4%87%E6%95%B0%E3%81%AE%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%8B%E3%82%89%E4%B8%80%E3%81%A4%E3%81%AE%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B)
+
+![alt text](sample5.png)
+
+
+
+#### 
+
+------
 
 その他、ときどき使うカラム
 
 
-active
-ignoreByDefault
-ignoreColumn
-qualifiedByName
-uses
-decorator
-inverse
 
-
-
-
-例:
-
-
-
-
-| className                               | type              | fieldName    |
-| --------------------------------------- | ----------------- | ------------ |
-| org.example.sample1.model.Sample1Dto    | java.lang.String  | param1       |
-| org.example.sample1.model.Sample1Dto    | java.lang.String  | param2       |
-| org.example.sample1.model.Sample1Dto    | java.lang.String  | param3       |
-| org.example.sample1.model.Sample1Domain | java.lang.String  | param1       |
-| org.example.sample1.model.Sample1Domain | java.lang.Integer | param2       |
-| org.example.sample1.model.Sample1Domain | java.lang.String  | domainParam3 |
-
-上記のようなExcelを作成し(sample1.xlsxとします)、実行してみます。
-
-```console
-$ npx generate-class --excelPath sample1.xlsx
-```
-
-出力は以下の通り。
- 
-```java
-package org.example.sample1.model;
-
-import lombok.Data;
-import lombok.*;
-
-@Data @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Sample1Dto {
-  private  java.lang.String param1;
-  private  java.lang.String param2;
-  private  java.lang.String param3;
-}
-```
-
-```java
-package org.example.sample1.model;
-
-import lombok.Data;
-import lombok.*;
-
-@Data @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Sample1Domain {
-  private  java.lang.String param1;
-  private  java.lang.Integer param2;
-  private  java.lang.String domainParam3;
-}
-```
-
-上記のコードが生成されました。
-
-
-immutableもやってみます。
-
-| className                               | type                             | fieldName    | immutable |
-| --------------------------------------- | -------------------------------- | ------------ | --------- |
-| org.example.sample1.model.Sample1Dto    | java.util.List<java.lang.String> | param1s      |           |
-| org.example.sample1.model.Sample1Dto    | java.lang.String                 | param2       |           |
-| org.example.sample1.model.Sample1Dto    | java.lang.String                 | param3       |           |
-| org.example.sample1.model.Sample1Domain | java.lang.String                 | param1       | TRUE      |
-| org.example.sample1.model.Sample1Domain | java.lang.Integer                | param2       |           |
-| org.example.sample1.model.Sample1Domain | java.lang.String                 | domainParam3 |           |
-
-
-
-Sample1Domain だけ immutable に指定しました。
-上記のようなExcelを作成し(sample2.xlsxとします)、実行してみます。
-
-
-```console
-$ npx generate-class --excelPath sample2.xlsx
-```
-
-
-```java
-package org.example.sample1.model;
-
-import lombok.Data;
-import lombok.*;
-
-@Data @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Sample1Dto {
-  private  java.util.List<java.lang.String> param1s;
-  private  java.lang.String param2;
-  private  java.lang.String param3;
-}
-```
-
-
-```java
-package org.example.sample1.model;
-
-
-import lombok.Value;
-import lombok.*;
-
-@Value
-@AllArgsConstructor
-@Builder
-public class Sample1Domain {
-  private final java.lang.String param1;
-  private final java.lang.Integer param2;
-  private final java.lang.String domainParam3;
-}
-
-```
-
-Sample1Domain だけ、Immutableなクラスとなりました！
-
-
-activeのプロパティも、列を追加してtrue/falseを設定してください。
 
 以上
