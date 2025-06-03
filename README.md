@@ -56,5 +56,4 @@ INFO [2025-06-02 15:31:41.157 +0900]: output/org/example/sample3/mapper/Sample3D
 ## 詳細
 
 - [クラス生成ツールの詳細](./README_generate-class.md)
-- MapStruct生成ツールの詳細
-<!-- - [MapStruct生成ツールの詳細](./README_generate-class.md) -->
+- [MapStruct生成ツールの詳細](./README_generate-mapping.md)
