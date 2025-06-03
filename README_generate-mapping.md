@@ -1,5 +1,5 @@
 
-## MapStructコード生成ツールの使い方。設定ファイル mappingdata.xlsx の書き方。
+MapStructコード生成ツールの使い方。設定ファイル mappingdata.xlsx の書き方。
 
 あらためてUsage
 
@@ -14,11 +14,14 @@ $
 ```
 
 
-### 基本的な使い方
+
+## 基本的な使い方
 
 このインプットとなるExcelデータについて。
 
-よく使うカラム
+
+
+### よく使うカラム
 
 |項目名|必須|説明|
 |--|--|--|
@@ -32,7 +35,7 @@ $
 
 
 
-例:
+### 例
 
 | className                                          | methodName | fromClass                            | toClass                                 | fromField | toField      |
 | -------------------------------------------------- | ---------- | ------------------------------------ | --------------------------------------- | --------- | ------------ |
@@ -79,11 +82,12 @@ public interface Sample1Dto2DomainMapper {
 一応ですが、プロパティ名が一致している場合は、それらもコピーされます。
 
  クラス図にすると以下のとおりです。
- 
+
 ![alt text](sample1.png)
 
 
-名前が異なるプロパティが複数ある場合は、
+
+#### 名前が異なるプロパティが複数ある場合
 
 
 | className                                          | methodName | fromClass                            | toClass                                 | fromField | toField |
@@ -111,11 +115,26 @@ public interface Sample1Dto2DomainMapper {
 となります。
 MapStructの最低限の機能を使う場合は、概ねこれでOKです！
 
+### 注意
+
+> 同名のメソッドについて、このUtilityは ``className,methodName,fromClass,toClass``をキー項目として処理します。それは
+>
+> ``void toDomainUpdate(Sample1Dto source, @MappingTarget Sample1Domain target)``
+>
+> このxxUpdate メソッドのキー項目が「メソッド名、引数1、引数2」となるためですが、その都合上
+>
+> ```
+> Sample1Domain1 toDomain(Sample1Dto source)
+> Sample1Domain2 toDomain(Sample1Dto source)
+> ```
+> などのメソッドが定義・出力できてしまいます(**Javaは同じメソッド名・引数で、別の戻り値は定義できない**)。
+> これらの変換メソッドを定義したい場合は、メソッド名を変更するなど、適宜工夫をしてください。
 
 
-### 応用
 
-#### 除外したいプロパティを指定する
+## 応用
+
+### 除外したいプロパティを指定する
 
 | 項目名(任意指定) | 説明                                   |
 | ---------------------- | -------------------------------------- |
@@ -131,7 +150,7 @@ MapStructの最低限の機能を使う場合は、概ねこれでOKです！
 | org.example.sample5.mapper.Sample5Dto2DomainMapper | toDomain   | org.example.sample5.model.Sample5Dto3 | org.example.sample5.model.Sample5Domain |           |         | v1           |
 | org.example.sample5.mapper.Sample5Dto2DomainMapper | toDomain   | org.example.sample5.model.Sample5Dto3 | org.example.sample5.model.Sample5Domain |           |         | v2           |
 | org.example.sample5.mapper.Sample5Dto2DomainMapper | toDomain   | org.example.sample5.model.Sample5Dto3 | org.example.sample5.model.Sample5Domain | v3        | v3      |              |
-    
+
 実行結果(適宜整形しています)
 
 
@@ -165,11 +184,13 @@ public interface Sample5Dto2DomainMapper {
 
 
 
-#### usesとqualifiedByName で、カスタム変換メソッドを使う
+### usesとqualifiedByName で、カスタム変換メソッドを使う
+
+
 
 | 項目名(いずれも任意指定) | 説明                                   | 備考                                 |
 | ---------------------- | -------------------------------------- | -------------------------------------- |
-| uses                   | このインタフェースが使用する別クラスを指定します(FQCN)。<br />ようするに``uses = { org.example.Sample2Dto2DomainConverter.class,  }``を出力します。 | クラス単位で記述<br />(クラスごとの先頭行を参照します) |
+| uses                   | このインタフェースが使用する別クラスを指定します(FQCN)。<br />ようするに``uses = { org.example.Sample2Dto2DomainConverter.class,  }``を出力します。<br />複数指定したい場合はカンマ区切りもしくはAlt+Enter区切りで指定可能です。.classは不要なのでご注意。 | クラス単位で記述<br />(クラスごとの先頭行を参照します) |
 | qualifiedByName        | 該当プロパティにカスタム変換名``qualifiedByName`` を記述。<br />よするに、``qualifiedByName = "xxx"`` を出力します。| プロパティ単位で記述 |
 
 
@@ -179,7 +200,7 @@ public interface Sample5Dto2DomainMapper {
 | className                                          | methodName | fromClass                            | toClass                                 | fromField | toField      | qualifiedByName | uses                                   |
 | -------------------------------------------------- | ---------- | ------------------------------------ | --------------------------------------- | --------- | ------------ | --------------- | -------------------------------------- |
 | org.example.sample2.mapper.Sample2Dto2DomainMapper | toDomain   | org.example.sample2.model.Sample2Dto | org.example.sample2.model.Sample2Domain | param3    | domainParam3 | toInt           | org.example.Sample2Dto2DomainConverter |
-    
+
 実行結果(適宜整形しています)
 
 
