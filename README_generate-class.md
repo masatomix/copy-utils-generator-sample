@@ -40,7 +40,10 @@ Options:
 $ npx generate-class --excelPath sample1.xlsx
 ```
 
-出力は以下の通り。
+> ときおり、Excelファイルにゴミ行が混入してエラーになったりします。その場合は適宜
+> データ行以下の行を、行削除してみてください。
+
+出力結果は以下の通りです。
  
 ```java
 package org.example.sample1.model;
