@@ -115,9 +115,9 @@ MapStructの最低限の機能を使う場合は、概ねこれでOKです！
 
 ### 応用
 
-#### 除外カラム
+#### 除外したいプロパティを指定する
 
-| 項目名(すべて任意指定) | 説明                                   |
+| 項目名(任意指定) | 説明                                   |
 | ---------------------- | -------------------------------------- |
 | ignoreColumn           | コピーから除外したいプロパティ名を指定 |
 
@@ -165,13 +165,45 @@ public interface Sample5Dto2DomainMapper {
 
 
 
-#### 
+#### usesとqualifiedByName で、カスタム変換メソッドを使う
 
-------
+| 項目名(いずれも任意指定) | 説明                                   | 備考                                 |
+| ---------------------- | -------------------------------------- | -------------------------------------- |
+| uses                   | このインタフェースが使用する別クラスを指定します(FQCN)。<br />ようするに``uses = { org.example.Sample2Dto2DomainConverter.class,  }``を出力します。 | クラス単位で記述<br />(クラスごとの先頭行を参照します) |
+| qualifiedByName        | 該当プロパティにカスタム変換名``qualifiedByName`` を記述。<br />よするに、``qualifiedByName = "xxx"`` を出力します。| プロパティ単位で記述 |
 
-その他、ときどき使うカラム
+
+
+使用例:
+
+| className                                          | methodName | fromClass                            | toClass                                 | fromField | toField      | qualifiedByName | uses                                   |
+| -------------------------------------------------- | ---------- | ------------------------------------ | --------------------------------------- | --------- | ------------ | --------------- | -------------------------------------- |
+| org.example.sample2.mapper.Sample2Dto2DomainMapper | toDomain   | org.example.sample2.model.Sample2Dto | org.example.sample2.model.Sample2Domain | param3    | domainParam3 | toInt           | org.example.Sample2Dto2DomainConverter |
+    
+実行結果(適宜整形しています)
+
+
+```java
+package org.example.sample2.mapper;
+
+
+@Mapper(componentModel = "spring" , unmappedTargetPolicy = ReportingPolicy.WARN , 
+uses = { Sample2Dto2DomainConverter.class,  } )
+public interface Sample2Dto2DomainMapper {
+
+    @Mapping(source = "param3", target = "domainParam3" ,qualifiedByName = "toInt")
+    Sample2Domain toDomain(Sample2Dto source);
+
+    ...省略
+
+}
+```
+
+あたりまえですが、Converterクラスはあらかじめ手動で用意しておきましょう。
+
+参考: [Sample2: 個別の変換ロジックを挟みたい](https://github.com/masatomix/MapStructSample?tab=readme-ov-file#sample2-%E5%80%8B%E5%88%A5%E3%81%AE%E5%A4%89%E6%8F%9B%E3%83%AD%E3%82%B8%E3%83%83%E3%82%AF%E3%82%92%E6%8C%9F%E3%81%BF%E3%81%9F%E3%81%84)
+
+![alt text](sample2.png)
 
 
 
-
-以上
