@@ -9,10 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "pino-pretty": "^13.0.0"
-  },
   "dependencies": {
-    "copy-utils-generator": "^0.0.8"
+    "copy-utils-generator": "^0.0.9"
+  },
+  "devDependencies": {
   }
 }
