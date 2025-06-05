@@ -10,8 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "copy-utils-generator": "^0.0.9"
-  },
-  "devDependencies": {
+    "copy-utils-generator": "^0.0.10"
   }
 }
