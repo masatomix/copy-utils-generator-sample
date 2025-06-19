@@ -1,6 +1,6 @@
 {
   "name": "copy-utils-generator-sample",
-  "version": "0.0.1",
+  "version": "0.0.2-SNAPSHOT",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "copy-utils-generator": "^0.0.12"
+    "copy-utils-generator": "^0.0.13"
   }
 }
