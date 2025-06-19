@@ -142,4 +142,16 @@ Sample1Domain だけ、Immutableなクラスとなりました！
 
 activeのプロパティも、列を追加してtrue/falseを設定してください。
 
+**2025/06/19追記**
+
+設定ファイルに AllArgsConstructor,Builder の列を追加できるようになりました。
+いままでの設定ファイルもそのまま利用可能です(結果は変わらずです)。
+
+その列にTRUE/FALSEを設定する事で、それぞれのアノテーションの出力を制御できます。
+- クラスごとの先頭行のデータを採用します。
+- BuilderはAllArgsConstructor に依存しているので、Builderが出力される場合はAllArgsConstructorも出力されます。
+
+![alt text](builderEtc.png)
+
+
 以上
