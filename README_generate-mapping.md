@@ -255,6 +255,15 @@ public interface Sample2Dto2DomainMapper {
 | ignoreByDefault | TRUEにしたメソッドは<br />``@BeanMapping(ignoreByDefault = true)``が出力されます。名前一致時の自動コピーがOFFになります。 | メソッド単位で記述<br />(メソッドごとの先頭行を参照します) |
 
 
+### xxxUpdate メソッドの出力を抑止したい。
+
+| 項目名(任意指定) | 説明                                   | 備考                                 |
+| ---------------------- | -------------------------------------- | -------------------------------------- |
+| updateMethod  | FALSEにしたメソッドはxxxUpdateメソッドが出力されなくなります。TargetがValue ObjectなどImmutableなときxxxUpdateメソッドがコンパイルエラーとなるため、その場合はこのオプションで出力を抑止してください。<br />デフォルト値はTRUEなので、FALSEを記述しない限り、xxxUpdateメソッドは出力される仕様です。 | メソッド単位で記述<br />(メソッドごとの先頭行を参照します) |
+
+
+
+
 ### decorator を使って別クラスで処理をDecorateする
 
 
